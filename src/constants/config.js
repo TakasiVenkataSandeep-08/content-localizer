@@ -14,6 +14,7 @@ const LOCALE_CONTEXT_DESCRIPTIONS = {
 const AI_SERVICE_PROVIDERS = {
   OPENAI: "openAI",
   MISTRALAI: "mistralAI",
+  GEMINIAI: "geminiAI",
 };
 
 module.exports = {

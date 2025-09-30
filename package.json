@@ -1,51 +1,174 @@
 {
-  "name": "localizer-ai",
-  "version": "0.0.1",
-  "description": "A powerful CLI tool for automating content localization using OpenAI GPT-4 or MistralAI, helping to localize apps. Supports multiple file types, preserves formatting, and enables context-aware translations.",
+  "name": "localizer-ai-vscode",
+  "version": "1.0.0",
+  "description": "AI-powered localization and translation extension",
+  "main": "./out/extension.js",
+  "scripts": {
+    "vscode:prepublish": "npm run compile",
+    "compile": "webpack --mode production",
+    "watch": "webpack --mode development --watch",
+    "lint": "eslint src/**/*.ts",
+    "pretest": "npm run compile",
+    "test": "echo 'Tests not implemented yet'",
+    "package": "vsce package",
+    "publish": "vsce publish"
+  },
   "keywords": [
-    "content localization",
-    "translation tool",
-    "VitePress localization",
-    "markdown translation",
-    "multilingual content",
-    "content management",
-    "AI translation",
-    "OpenAI integration",
-    "MistralAI integration",
-    "CLI tool",
-    "documentation translation",
-    "parallel processing",
-    "format preservation"
+    "localization",
+    "translation",
+    "ai",
+    "internationalization"
   ],
+  "author": "Takasi Venkatasandeep",
+  "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TakasiVenkataSandeep-08/localizer-AI"
-  },
-  "main": "./index.js",
-  "bin": {
-    "localizer-ai": "./index.js"
-  },
-  "scripts": {
-    "dev": "node --watch ./index.js",
-    "start": "node ./index.js",
-    "postinstall": "bash ./scripts/postinstall.sh"
-  },
-  "author": "Takasi Venkata Sandeep",
-  "license": "MIT",
-  "dependencies": {
-    "@mistralai/mistralai": "^1.3.1",
-    "openai": "^4.71.1"
+    "url": "https://github.com/takasivenkatasandeep/localizer-ai-vscode"
   },
   "engines": {
-    "node": ">=16.0.0"
+    "vscode": "^1.74.0"
   },
-  "bugs": {
-    "url": "https://github.com/TakasiVenkataSandeep-08/localizer-AI/issues"
+  "categories": [
+    "Other"
+  ],
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "contributes": {
+    "commands": [
+      {
+        "command": "localizer-ai.createConfig",
+        "title": "Create Translation Configuration",
+        "category": "Localizer AI"
+      },
+      {
+        "command": "localizer-ai.translateFiles",
+        "title": "Translate Files",
+        "category": "Localizer AI"
+      },
+      {
+        "command": "localizer-ai.openSettings",
+        "title": "Open Extension Settings",
+        "category": "Localizer AI"
+      },
+      {
+        "command": "localizer-ai.resetKeys",
+        "title": "Reset API Keys",
+        "category": "Localizer AI"
+      },
+      {
+        "command": "localizer-ai.showWelcome",
+        "title": "Show Welcome",
+        "category": "Localizer AI"
+      }
+    ],
+    "menus": {
+      "explorer/context": [
+        {
+          "command": "localizer-ai.translateFiles",
+          "when": "explorerResourceIsFolder || resourceExtname =~ /\\.(json|md|txt|yaml|yml)$/"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "localizer-ai.createConfig"
+        },
+        {
+          "command": "localizer-ai.translateFiles",
+          "when": "workspaceFolderCount > 0"
+        },
+        {
+          "command": "localizer-ai.openSettings"
+        },
+        {
+          "command": "localizer-ai.resetKeys"
+        },
+        {
+          "command": "localizer-ai.showWelcome"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Localizer AI",
+      "properties": {
+        "localizer-ai.openai.apiKey": {
+          "type": "string",
+          "description": "OpenAI API key for translation"
+        },
+        "localizer-ai.gemini.apiKey": {
+          "type": "string",
+          "description": "Google Gemini API key for translation"
+        },
+        "localizer-ai.mistral.apiKey": {
+          "type": "string",
+          "description": "MistralAI API key for translation"
+        },
+        "localizer-ai.defaultSourceLanguage": {
+          "type": "string",
+          "default": "en",
+          "description": "Default source language for translations"
+        },
+        "localizer-ai.defaultTargetLanguages": {
+          "type": "array",
+          "default": [],
+          "description": "Default target languages for translations"
+        },
+        "localizer-ai.aiProvider": {
+          "type": "string",
+          "default": "openai",
+          "enum": [
+            "openai",
+            "gemini",
+            "mistral"
+          ],
+          "description": "Default AI provider for translations"
+        },
+        "localizer-ai.model": {
+          "type": "string",
+          "default": "gpt-3.5-turbo",
+          "description": "AI model to use for translations"
+        },
+        "localizer-ai.batchSize": {
+          "type": "number",
+          "default": 10,
+          "description": "Number of files to translate simultaneously"
+        },
+        "localizer-ai.rateLimit": {
+          "type": "object",
+          "properties": {
+            "requestsPerMinute": {
+              "type": "number",
+              "default": 20,
+              "description": "Maximum requests per minute"
+            },
+            "tokensPerMinute": {
+              "type": "number",
+              "default": 60000,
+              "description": "Maximum tokens processed per minute"
+            }
+          }
+        }
+      }
+    }
   },
-  "homepage": "https://github.com/TakasiVenkataSandeep-08/localizer-AI#readme",
-  "files": [
-    "index.js",
-    "src/**/*",
-    "scripts/postinstall.sh"
-  ]
+  "dependencies": {
+    "@google/generative-ai": "^0.5.0",
+    "@mistralai/mistralai": "^1.3.1",
+    "configstore": "^5.0.1",
+    "openai": "^4.71.1",
+    "prompts": "^2.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^18.15.11",
+    "@types/prompts": "^2.4.2",
+    "@types/vscode": "^1.74.0",
+    "@typescript-eslint/eslint-plugin": "^5.57.1",
+    "@typescript-eslint/parser": "^5.57.1",
+    "eslint": "^8.38.0",
+    "ts-loader": "^9.4.2",
+    "typescript": "^5.0.4",
+    "vsce": "^2.15.0",
+    "webpack": "^5.80.0",
+    "webpack-cli": "^5.0.1"
+  }
 }
